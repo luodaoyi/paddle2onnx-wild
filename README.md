@@ -2,6 +2,8 @@
 
 [简体中文](README_zh.md) | English
 
+## About Edition Wild
+It's supposed to support OnnxRuntime 1.7.
 ## Introduction
 
 Paddle2ONNX enables users to convert models from PaddlePaddle to ONNX.
