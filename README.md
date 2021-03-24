@@ -28,14 +28,11 @@ Paddle2ONNX enables users to convert models from PaddlePaddle to ONNX.
      onnx == 1.7.0 | Optional
 ## Installation
 
-### Via Pip
-    
-     pip install paddle2onnx
-    
+  
 
 ### From Source
 
-     git clone https://github.com/PaddlePaddle/paddle2onnx.git
+     git clone https://github.com/znsoftm/paddle2onnx-wild.git
      python setup.py install
 
 ## Usage
