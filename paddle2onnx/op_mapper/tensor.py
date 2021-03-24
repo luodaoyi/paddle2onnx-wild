@@ -163,7 +163,7 @@ class Slice():
         # tensor[i,:] will decrease rank of origin input, example:
         # paddle.slice() will not decrease rank of origin input
         # if input shape is [2, 3], input[0, :] will generate output with shape [3], not [1, 3].
-        # paddle.slice(input, 0, 1, 0) will  generate output with shape [1, 3], not [3]. 
+        # paddle.slice(input, 0, 1, 0) will  generate output with shape [1, 3], not [3].
 
         decrease_axis = node.attr('decrease_axis')
         if len(decrease_axis) == 0:
@@ -354,7 +354,7 @@ class Constant():
         value = np.ones(shape) * value
         value = value.astype(dtypes.DTYPE_PADDLE_NUMPY_MAP[dtype])
         value = value.flatten().tolist()
-	if len(shape) ==0 and len(node.input('ShapeTensor')) > 0:
+        if len(shape) ==0 and len(node.input('ShapeTensor')) > 0:
             shape_tensor = mapper_helper.cast(graph,
                                        node.input('ShapeTensor', 0),
                                        node.input_dtype('ShapeTensor', 0), 'int64')
@@ -481,7 +481,7 @@ class Gather():
                 inputs=[node.input('X', 0), node.input('Index', 0)],
                 outputs=node.output('Out'))
         else:
-            # gather_nd 
+            # gather_nd
             graph.make_node(
                 'GatherND',
                 inputs=[node.input('X', 0), node.input('Index', 0)],
