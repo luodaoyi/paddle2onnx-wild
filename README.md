@@ -1,11 +1,7 @@
-# Paddle2ONNX (Wild) 
-
-It's derived from  https://github.com/PaddlePaddle/Paddle2ONNX
+# Paddle2ONNX
 
 [简体中文](README_zh.md) | English
 
-## About Edition Wild
-It's supposed to support OnnxRuntime 1.7.
 ## Introduction
 
 Paddle2ONNX enables users to convert models from PaddlePaddle to ONNX.
@@ -28,11 +24,15 @@ Paddle2ONNX enables users to convert models from PaddlePaddle to ONNX.
      onnx == 1.7.0 | Optional
 ## Installation
 
-  
+### Via Pip
+    
+     pip install paddle2onnx
+    
 
 ### From Source
 
-     git clone https://github.com/znsoftm/paddle2onnx-wild.git
+     git clone https://github.com/PaddlePaddle/Paddle2ONNX.git
+     cd Paddle2ONNX
      python setup.py install
 
 ## Usage

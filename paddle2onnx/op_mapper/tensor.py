@@ -38,6 +38,16 @@ class Concat():
             axis=node.attr('axis'))
 
 
+@op_mapper('assign')
+class Assign():
+    support_opset_verison_range = (1, 12)
+
+    @classmethod
+    def opset_1(cls, graph, node, **kw):
+        inputs = node.input('X')
+        graph.make_node('Identity', inputs=inputs, outputs=node.output('Out'))
+
+
 @op_mapper('lod_reset')
 class LodReset():
     support_opset_verison_range = (1, )
@@ -163,7 +173,7 @@ class Slice():
         # tensor[i,:] will decrease rank of origin input, example:
         # paddle.slice() will not decrease rank of origin input
         # if input shape is [2, 3], input[0, :] will generate output with shape [3], not [1, 3].
-        # paddle.slice(input, 0, 1, 0) will  generate output with shape [1, 3], not [3].
+        # paddle.slice(input, 0, 1, 0) will  generate output with shape [1, 3], not [3]. 
 
         decrease_axis = node.attr('decrease_axis')
         if len(decrease_axis) == 0:
@@ -180,6 +190,13 @@ class Slice():
         starts = node.attr('starts')
         ends = node.attr('ends')
         steps = node.attr('strides', [1] * len(ends))
+
+        input_shape = node.input_shape('Input', 0)
+        for i, e in enumerate(ends):
+            axis = axes[i]
+            if e > input_shape[axis] and input_shape[axis] > 0:
+                ends[i] = input_shape[axis]
+
         if steps != [1] * len(ends):
             raise Exception(
                 "Slice in onnx(opset<10) not support attribute 'step', Try converting with opset_version >=10"
@@ -212,6 +229,12 @@ class Slice():
         starts = node.attr('starts')
         ends = node.attr('ends')
         steps = node.attr('strides', [1] * len(ends))
+
+        input_shape = node.input_shape('Input', 0)
+        for i, e in enumerate(ends):
+            axis = axes[i]
+            if e > input_shape[axis] and input_shape[axis] > 0:
+                ends[i] = input_shape[axis]
 
         axes_node = graph.make_node(
             'Constant', attrs={'dtype': dtypes.ONNX.INT64,
@@ -481,7 +504,7 @@ class Gather():
                 inputs=[node.input('X', 0), node.input('Index', 0)],
                 outputs=node.output('Out'))
         else:
-            # gather_nd
+            # gather_nd 
             graph.make_node(
                 'GatherND',
                 inputs=[node.input('X', 0), node.input('Index', 0)],
@@ -908,14 +931,19 @@ class Resize():
             })
         inputs = [node.input('X')[0], roi_node]
         node_lists.append(roi_node)
-        if len(node.input('OutSize')) > 0 or len(node.input('SizeTensor')) > 0:
+
+        out_size = node.input('OutSize')
+        size_tensor = node.input('SizeTensor')
+        scale = node.input('Scale')
+        if (out_size is not None and len(out_size) > 0) or (
+                size_tensor is not None and len(size_tensor) > 0):
             empty_node = graph.make_node(
                 'Constant', attrs={'dtype': dtypes.ONNX.FLOAT,
                                    'value': []})
             inputs.append(empty_node)
             _, out_shape = cls.compute_output_shape(graph, node)
             inputs.append(out_shape)
-        elif len(node.input('Scale')) > 0:
+        elif scale is not None and len(scale) > 0:
             scale = node.input('Scale')[0]
             inputs.append(scale)
         else:
